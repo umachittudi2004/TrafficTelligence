@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Prediction Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="inspect">
+    <nav>
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/inspect">Predict</a>
+        <a href="/contact">Contact</a>
+    </nav>
+
+    <div class="form-container slide-in-up">
+        <h1 style="text-align: center;">Traffic Volume Prediction</h1>
+        <div class="result fade-in">
+            <h3>{{ prediction_text }}</h3>
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="/inspect" class="back-button">Try Another Prediction</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,21 @@
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Virtual environments
+venv/
+ENV/
+.env
+
+# VS Code
+.vscode/
+
+# Model files
+*.pkl
+
+# Data files
+*.csv
+
+# OS files
+.DS_Store
+Thumbs.db

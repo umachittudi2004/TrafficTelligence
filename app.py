@@ -148,7 +148,7 @@ if __name__ == "__main__":
 
 # app.py
 
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request
 import pickle
 import numpy as np
 
@@ -156,7 +156,7 @@ app = Flask(__name__)
 
 # Load model and preprocessing tools
 model = pickle.load(open('model.pkl', 'rb'))
-scaler = pickle.load(open('encoder.pkl', 'rb'))
+scaler = pickle.load(open('scaler.pkl', 'rb'))
 le_holiday = pickle.load(open('le_holiday.pkl', 'rb'))
 le_weather = pickle.load(open('le_weather.pkl', 'rb'))
 
@@ -168,8 +168,14 @@ def home():
 def about():
     return render_template('about.html')
 
-@app.route('/contact')
+@app.route('/contact', methods=['GET', 'POST'])
 def contact():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        message = request.form.get('message')
+        print(f"Received contact message from {name} ({email}): {message}")
+        return render_template('contact.html', message_sent=True,user_name=name)
     return render_template('contact.html')
 
 @app.route('/inspect')
@@ -179,44 +185,44 @@ def inspect():
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
-        # Get form inputs
-        holiday = request.form.get('Holiday')            # e.g. "None"
-        temp = float(request.form.get('Temp'))
-        rain = float(request.form.get('Rain'))
-        snow = float(request.form.get('snow'))
-        weather = request.form.get('weather')            # e.g. "Clouds"
-        year = int(request.form.get('year'))
-        month = int(request.form.get('month'))
-        day = int(request.form.get('day'))
-        hour = int(request.form.get('hours'))
-        minutes = int(request.form.get('minutes'))
-        seconds = int(request.form.get('seconds'))
+        # Retrieve raw inputs
+        holiday_raw = request.form.get('Holiday')
+        weather_raw = request.form.get('weather')
 
-        # Encode holiday and weather
-        holiday_encoded = le_holiday.transform([holiday])[0]
-        weather_encoded = le_weather.transform([weather])[0]
+        # Ensure fallback values to avoid LabelEncoder errors
+        if holiday_raw not in le_holiday.classes_:
+            holiday_raw = 'None'  # Default holiday class
+        if weather_raw not in le_weather.classes_:
+            weather_raw = 'Clouds'  # Default weather class
 
-        # Prepare final input
-        input_data = np.array([[holiday_encoded, temp, rain, snow, weather_encoded,
-                                year, month, day, hour, minutes, seconds]])
+        # Encode
+        holiday = le_holiday.transform([holiday_raw])[0]
+        weather = le_weather.transform([weather_raw])[0]
 
-        # Scale input
-        scaled_input = scaler.transform(input_data)
+        # Convert numeric inputs
+        temp = float(request.form['Temp'])
+        rain = float(request.form['Rain'])
+        snow = float(request.form['snow'])
+        year = int(request.form['year'])
+        month = int(request.form['month'])
+        day = int(request.form['day'])
+        hours = int(request.form['hours'])
+        minutes = int(request.form['minutes'])
+        seconds = int(request.form['seconds'])
+
+        # Final feature vector
+        features = [holiday, temp, rain, snow, weather, year, month, day, hours, minutes, seconds]
+        scaled_features = scaler.transform([features])
 
         # Make prediction
-        prediction = model.predict(scaled_input)
-        result = f"Predicted Traffic Volume: {prediction[0]:.2f}"
+        prediction = model.predict(scaled_features)
+        result = f'Predicted Traffic Volume: {prediction[0]:,.2f}'
 
     except Exception as e:
-        result = f"Error: {str(e)}"
+        result = f'Error: {str(e)}'
 
-    # Redirect to result page with the prediction
-    return redirect(url_for('result', prediction_text=result))
-
-@app.route('/result')
-def result():
-    prediction_text = request.args.get('prediction_text', 'No result available.')
-    return render_template('result.html', prediction_text=prediction_text)
+    # Render separate result page
+    return render_template('result.html', prediction_text=result)
 
 if __name__ == '__main__':
     app.run(debug=True)

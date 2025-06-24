@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Predict Traffic</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -16,60 +15,44 @@
     <div class="form-container slide-in-up">
         <h1 style="text-align:center;">Traffic Volume Estimation</h1>
         <form action="{{ url_for('predict') }}" method="post">
-            <h3>Holiday Type</h3>
-            <div class="radio-inputs">
-                <label>
-                    <input class="radio-input" type="radio" name="Holiday" value="None" checked>
-                    <span class="radio-tile">
-                        <span class="radio-icon">🎉</span>
-                        <span class="radio-label">None</span>
-                    </span>
-                </label>
-                <label>
-                    <input class="radio-input" type="radio" name="Holiday" value="Columbus Day">
-                    <span class="radio-tile">
-                        <span class="radio-icon">🗽</span>
-                        <span class="radio-label">Columbus Day</span>
-                    </span>
-                </label>
-                <label>
-                    <input class="radio-input" type="radio" name="Holiday" value="Veterans Day">
-                    <span class="radio-tile">
-                        <span class="radio-icon">🎖️</span>
-                        <span class="radio-label">Veterans Day</span>
-                    </span>
-                </label>
-            </div>
+            
+            <label for="holiday">Holiday:</label>
+            <select id="holiday" name="Holiday" required>
+                <option value="None">None</option>
+                <option value="Columbus Day">Columbus Day</option>
+                <option value="Veterans Day">Veterans Day</option>
+                <option value="Thanksgiving Day">Thanksgiving Day</option>
+                <option value="Christmas Day">Christmas Day</option>
+                <option value="New Years Day">New Years Day</option>
+                <option value="Washingtons Birthday">Washingtons Birthday</option>
+                <option value="Memorial Day">Memorial Day</option>
+                <option value="Independence Day">Independence Day</option>
+                <option value="State Fair">State Fair</option>
+                <option value="Labor Day">Labor Day</option>
+                <option value="Martin Luther King Jr Day">Martin Luther King Jr Day</option>
+            </select>
+    
             <label>Temperature (°C):</label>
-            <input type="number" name="Temp" required>
-            <label>Rain (0 or 1):</label>
-            <input type="number" name="Rain" min="0" max="1" required>
+            <input type="number" name="Temp" step="0.01" required>
+            <label>Rain (0 to 1):</label>
+            <input type="number" name="Rain" min="0" max="1" step="0.01" required>
             <label>Snow (0 or 1):</label>
             <input type="number" name="snow" min="0" max="1" required>
-            <h3>Weather Condition</h3>
-            <div class="radio-inputs">
-                <label>
-                    <input class="radio-input" type="radio" name="weather" value="Clear" checked>
-                    <span class="radio-tile">
-                        <span class="radio-icon">☀️</span>
-                        <span class="radio-label">Clear</span>
-                    </span>
-                </label>
-                <label>
-                    <input class="radio-input" type="radio" name="weather" value="Clouds">
-                    <span class="radio-tile">
-                        <span class="radio-icon">☁️</span>
-                        <span class="radio-label">Clouds</span>
-                    </span>
-                </label>
-                <label>
-                    <input class="radio-input" type="radio" name="weather" value="Rain">
-                    <span class="radio-tile">
-                        <span class="radio-icon">🌧️</span>
-                        <span class="radio-label">Rain</span>
-                    </span>
-                </label>
-            </div>
+
+        
+            <label for="weather">Weather:</label>
+            <select name="weather" required>
+                <option value="Clouds">Clouds</option>
+                <option value="Clear">Clear</option>
+                <option value="Rain">Rain</option>
+                <option value="Snow">Snow</option>
+                <option value="Drizzle">Drizzle</option>
+                <option value="Mist">Mist</option>
+                <option value="Haze">Haze</option>
+                <option value="Fog">Fog</option>
+                <option value="Thunderstorm">Thunderstorm</option>
+            </select>
+            
             <label>Year:</label>
             <input type="number" name="year" min="2012" max="2022" required>
             <label>Month:</label>
